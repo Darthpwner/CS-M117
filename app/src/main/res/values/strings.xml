@@ -4,4 +4,6 @@
     <string name="title_activity_game_page">game_page</string>
     <string name="title_activity_lobby_page">lobby_page</string>
     <string name="title_activity_login_page">login_page</string>
+    <string name="newGame">Join New Game</string>
+    <string name="existingGame">Join Existing Game</string>
 </resources>
