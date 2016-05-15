@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -23,6 +24,8 @@ public class lobby_page extends AppCompatActivity {
     TextView User4Textview;
     TextView User5Textview;
     TextView User6Textview;
+    TextView subtitle;
+
 
     public long Occupied;
     Firebase myFirebaseRef;
@@ -38,6 +41,7 @@ public class lobby_page extends AppCompatActivity {
         User4Textview = (TextView) findViewById(R.id.lobby_user_4);
         User5Textview = (TextView) findViewById(R.id.lobby_user_5);
         User6Textview = (TextView) findViewById(R.id.lobby_user_6);
+        subtitle = (TextView) findViewById(R.id.lobby_page_user_number);
 
         Firebase.setAndroidContext(this);
         myFirebaseRef = new Firebase("https://assassinsm1117.firebaseio.com/");
@@ -107,6 +111,15 @@ public class lobby_page extends AppCompatActivity {
             @Override
             public void onCancelled(FirebaseError error) {}
         });
+        myFirebaseRef.child("Lobby").child("Occupied").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                Occupied = (long) snapshot.getValue();
+                subtitle.setText(Occupied + " of 6 people have joined");
+            }
+            @Override
+            public void onCancelled(FirebaseError error) {}
+        });
     }
 
     public void onClick(View v) {
@@ -115,9 +128,17 @@ public class lobby_page extends AppCompatActivity {
             showAlertDialogue("Can't have game with less than two players!");
         }
         else {
-            //Starting a new Intent
-            Intent nextScreen = new Intent(getApplicationContext(), game_page.class);
-            startActivity(nextScreen);
+            //retrieve usernumber
+            int usernumber = PreferenceManager.getDefaultSharedPreferences(this).getInt("UserNumber", -1);
+            if(usernumber == 1){
+                myFirebaseRef.child("Active").setValue(1);
+                //Starting a new Intent
+                Intent nextScreen = new Intent(getApplicationContext(), game_page.class);
+                startActivity(nextScreen);
+            }
+            else {
+                showAlertDialogue("You did not create the Lobby. Wait for the owner to start the game");
+            }
         }
     }
 

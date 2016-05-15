@@ -19,7 +19,7 @@ public class login_page extends AppCompatActivity {
 
     Firebase myFirebaseRef;
     EditText editText;
-    public int LobbySize;
+    public long LobbySize;
     public long [] active_users = {-1,-1,-1,-1,-1,-1};
 
 
@@ -89,7 +89,7 @@ public class login_page extends AppCompatActivity {
         myFirebaseRef.child("Lobby").child("Size").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-                active_users[5] = (long) snapshot.getValue();
+                LobbySize = (long) snapshot.getValue();
             }
 
             @Override
@@ -112,8 +112,8 @@ public class login_page extends AppCompatActivity {
         if (your_user == -1) {
             showAlertDialogue("Sorry the Lobby is currently full!");
         }
-        else if(editText.getText().toString().isEmpty()){
-            showAlertDialogue("Enter a Valid Username!");
+        else if(editText.getText().toString().isEmpty() || editText.getText().toString().length() > 12){
+            showAlertDialogue("Your Username is too short or too long!");
         }
         else {
             //set User Active and name
