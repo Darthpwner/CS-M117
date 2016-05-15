@@ -3,6 +3,8 @@ package matthewallenlinsoftware.cs_m117_assassins;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -16,6 +18,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -77,24 +80,39 @@ public class game_page extends FragmentActivity implements OnMapReadyCallback, L
 
         // Add a marker in Sydney and move the camera
         LatLng ucla = new LatLng(34.0689, -118.4452);
-        mMap.addMarker(new MarkerOptions().position(ucla).title("Marker in UCLA"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(ucla));
+        setMarker(ucla);
 
     }
 
-    @Override
-    public void onLocationChanged(Location location) {
-        Double lat = location.getLatitude();
-        Double lng = location.getLongitude();
+    //Used to scale the icons
+    public Bitmap resizeMapIcons(String iconName, int width, int height) {
+        Bitmap imageBitmap = BitmapFactory.decodeResource(getResources(), getResources().getIdentifier(iconName, "drawable", getPackageName()));
+        Bitmap resizedBitmap = Bitmap.createScaledBitmap(imageBitmap, width, height, false);
+        return resizedBitmap;
+    }
+
+    public void setMarker(LatLng latLng){
+        Double lat = latLng.latitude;
+        Double lng = latLng.longitude;
 
         Log.i("Latitude", lat.toString());
         Log.i("Longitude", lng.toString());
 
         mMap.clear();   //Removes previous markers
 
-        mMap.addMarker(new MarkerOptions().position(new LatLng(lat, lng)).title("Your location"));
+        MarkerOptions markerOptions = new MarkerOptions().position(new LatLng(lat, lng))
+                .title("Your Location")
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("user_marker", 100, 100))); //Resizes the icon to look good
+        mMap.addMarker(markerOptions);
 
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lng), 12));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lng), 15));    //Zooms in pretty deep into the map
+
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+        setMarker(latLng);
     }
 
     @Override
