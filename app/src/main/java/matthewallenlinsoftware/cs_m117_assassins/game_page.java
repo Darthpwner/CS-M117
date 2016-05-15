@@ -8,65 +8,44 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
-import android.view.View;
 
-public class game_page extends AppCompatActivity implements LocationListener {
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+
+public class game_page extends FragmentActivity implements OnMapReadyCallback, LocationListener {
+
+    private GoogleMap mMap; //Might be null if Google Play services APK is not available
 
     LocationManager locationManager;
-    String provider;    //Uses the network location
+    String provider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_page);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE); //Gets the location service
+        provider = locationManager.getBestProvider(new Criteria(), false);
 
-        provider = locationManager.getBestProvider(new Criteria(), false);  //Check if best provider is available
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        Location location = locationManager.getLastKnownLocation(provider);
-
-        if (location != null) {
-            Log.i("Location Info", "Location achieved!");
-        } else {
-            Log.i("Location Info", "Not found!");
-        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-
-        //2nd parameter (minimum time): 15s == 15000 ms
-        //3rd parameter (meters update): 3m update
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
@@ -78,7 +57,29 @@ public class game_page extends AppCompatActivity implements LocationListener {
             return;
         }
 
+        //2nd parameter: Check at a minimum of 15 second intervals
+        //3rd parameter: Check 3 meters (10 feet) away
         locationManager.requestLocationUpdates(provider, 15000, 3, this);
+    }
+
+    /**
+     * Manipulates the map once available.
+     * This callback is triggered when the map is ready to be used.
+     * This is where we can add markers or lines, add listeners or move the camera. In this case,
+     * we just add a marker near Sydney, Australia.
+     * If Google Play services is not installed on the device, the user will be prompted to install
+     * it inside the SupportMapFragment. This method will only be triggered once the user has
+     * installed Google Play services and returned to the app.
+     */
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+
+        // Add a marker in Sydney and move the camera
+        LatLng ucla = new LatLng(34.0689, -118.4452);
+        mMap.addMarker(new MarkerOptions().position(ucla).title("Marker in UCLA"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(ucla));
+
     }
 
     @Override
@@ -86,8 +87,14 @@ public class game_page extends AppCompatActivity implements LocationListener {
         Double lat = location.getLatitude();
         Double lng = location.getLongitude();
 
-        Log.i("Location info: Lat", lat.toString());
-        Log.i("Location info: Lng", lng.toString());
+        Log.i("Latitude", lat.toString());
+        Log.i("Longitude", lng.toString());
+
+        mMap.clear();   //Removes previous markers
+
+        mMap.addMarker(new MarkerOptions().position(new LatLng(lat, lng)).title("Your location"));
+
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lng), 12));
     }
 
     @Override
@@ -103,21 +110,5 @@ public class game_page extends AppCompatActivity implements LocationListener {
     @Override
     public void onProviderDisabled(String provider) {
 
-    }
-
-    public void getLocation() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        Location location = locationManager.getLastKnownLocation(provider);
-
-        onLocationChanged(location);
     }
 }
