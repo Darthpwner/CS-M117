@@ -1,18 +1,102 @@
 package matthewallenlinsoftware.cs_m117_assassins;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 
 public class selection_page extends AppCompatActivity {
+
+    Button startExistingGame;
+    Button startNewGame;
+    public boolean GameActive = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_selection_page);
+        startExistingGame = (Button) findViewById(R.id.join_existing_game);
+        startNewGame = (Button) findViewById(R.id.join_new_game_button);
+
+        //Firebase Content
+        Firebase.setAndroidContext(this);
+        Firebase myFirebaseRef = new Firebase("https://assassinsm1117.firebaseio.com/");
+        myFirebaseRef.child("Firebase").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                System.out.println("FUCKING FIREBASE IS");
+                System.out.println(snapshot.getValue());
+                System.out.println("HELL YEAH!!!");
+            }
+
+            @Override
+            public void onCancelled(FirebaseError error) {
+            }
+        });
+        myFirebaseRef.child("Active").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                long value = (long) snapshot.getValue();
+                if (value == 0){GameActive = false;}
+                else {GameActive = true;}
+            }
+            @Override
+            public void onCancelled(FirebaseError error) {
+            }
+        });
+
+        //button listeners
+        startExistingGame.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //check if game active
+                if (GameActive) {
+                    //Starting a new Intent
+                    Intent nextScreen = new Intent(getApplicationContext(), game_page.class);
+                    //Sending data to another Activity
+                    startActivity(nextScreen);
+                } else {
+                    showAlertDialogue("Sorry no game currently available");
+                }
+
+            }
+        });
+        startNewGame.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (GameActive) {
+                    showAlertDialogue("Sorry a game is currently running");
+                } else {
+                    //Starting a new Intent
+                    Intent nextScreen = new Intent(getApplicationContext(), login_page.class);
+                    //Sending data to another Activity
+                    startActivity(nextScreen);
+                }
+            }
+        });
+    }
+
+    public void showAlertDialogue(String message){
+        AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+        alertDialog.setTitle("Invalid");
+        alertDialog.setMessage(message);
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "Ok",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        alertDialog.show();
     }
 
     @Override
@@ -35,21 +119,5 @@ public class selection_page extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    public void onClickNewGame(View v) {
-        //Starting a new Intent
-        Intent nextScreen = new Intent(getApplicationContext(), login_page.class);
-
-        //Sending data to another Activity
-        startActivity(nextScreen);
-    }
-
-    public void onClickExistingGame(View v) {
-        //Starting a new Intent
-        Intent nextScreen = new Intent(getApplicationContext(), game_page.class);
-
-        //Sending data to another Activity
-        startActivity(nextScreen);
     }
 }
