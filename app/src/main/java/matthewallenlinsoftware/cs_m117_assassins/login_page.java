@@ -1,9 +1,12 @@
 package matthewallenlinsoftware.cs_m117_assassins;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.EditText;
 
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
@@ -13,33 +16,123 @@ import com.firebase.client.ValueEventListener;
 public class login_page extends AppCompatActivity {
 
     Firebase myFirebaseRef;
+    EditText editText;
+    public int LobbySize;
+    public long [] active_users = {-1,-1,-1,-1,-1,-1};
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_page);
         Firebase.setAndroidContext(this);
         myFirebaseRef = new Firebase("https://assassinsm1117.firebaseio.com/");
-        myFirebaseRef.child("Count").addValueEventListener(new ValueEventListener() {
+        myFirebaseRef.child("Lobby").child("User1").child("Active").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-                System.out.println("FUCKING FIREBASE");
-                System.out.println(snapshot.getValue());
-                System.out.println("FUCKING FIREBASE");
+                active_users[0] = (long) snapshot.getValue();
             }
             @Override public void onCancelled(FirebaseError error) { }
         });
 
+        myFirebaseRef.child("Lobby").child("User2").child("Active").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                active_users[1] = (long) snapshot.getValue();
+            }
+            @Override
+            public void onCancelled(FirebaseError error) {}
+        });
+
+        myFirebaseRef.child("Lobby").child("User3").child("Active").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                active_users[2] = (long) snapshot.getValue();
+            }
+            @Override
+            public void onCancelled(FirebaseError error) {}
+        });
+
+        myFirebaseRef.child("Lobby").child("User4").child("Active").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                active_users[3] = (long) snapshot.getValue();
+            }
+
+            @Override
+            public void onCancelled(FirebaseError error) {
+            }
+        });
+
+        myFirebaseRef.child("Lobby").child("User5").child("Active").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                active_users[4] = (long) snapshot.getValue();
+            }
+
+            @Override
+            public void onCancelled(FirebaseError error) {
+            }
+        });
+
+        myFirebaseRef.child("Lobby").child("User6").child("Active").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                active_users[5] = (long) snapshot.getValue();
+            }
+            @Override
+            public void onCancelled(FirebaseError error) {}
+        });
+
+        myFirebaseRef.child("Lobby").child("Size").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                active_users[5] = (long) snapshot.getValue();
+            }
+
+            @Override
+            public void onCancelled(FirebaseError error) {
+            }
+        });
+
+        editText = (EditText) findViewById(R.id.username);
     }
 
     public void onClick(View v) {
-        //Starting a new Intent
-        Intent nextScreen = new Intent(getApplicationContext(), lobby_page.class);
+        //figure out your user number
+        int your_user = -1;
+        for(int i = 0; i < active_users.length; i++){
+            if (active_users[i] == 0){
+                your_user = i+1;
+                break;
+            }
+        }
+        if (your_user == -1) {
+            showAlertDialogue("Sorry the Lobby is currently full!");
+        }
+        else {
+            //set User Active and name
+            myFirebaseRef.child("Lobby").child("User" + your_user).child("Active").setValue(1);
+            myFirebaseRef.child("Lobby").child("User"+your_user).child("Name").setValue(editText.getText().toString());
 
-        nextScreen.putExtra("username", R.id.username);
-
-        System.out.println("username: " + R.id.username);
-
-        //Sending data to another Activity
-        startActivity(nextScreen);
+            //Starting a new Intent
+            Intent nextScreen = new Intent(getApplicationContext(), lobby_page.class);
+            //Sending data to another Activity
+            startActivity(nextScreen);
+        }
     }
+
+    public void showAlertDialogue(String message){
+        AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+        alertDialog.setTitle("Invalid");
+        alertDialog.setMessage(message);
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "Ok",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        alertDialog.show();
+    }
+
 }
