@@ -64,7 +64,9 @@
             android:paddingTop="2dp"
             android:paddingBottom="2dp"
             android:textColor="#ffffff"
-            android:layout_marginBottom="20dp" />
+            android:layout_marginBottom="20dp"
+            android:hint="Less than 12 characters"
+            android:textColorHint="#A8A8A8" />
 
         <Button
             android:layout_width="fill_parent"
