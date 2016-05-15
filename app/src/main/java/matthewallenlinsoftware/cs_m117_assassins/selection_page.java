@@ -68,7 +68,6 @@ public class selection_page extends AppCompatActivity {
                 } else {
                     showAlertDialogue("Sorry no game currently available");
                 }
-
             }
         });
         startNewGame.setOnClickListener(new View.OnClickListener() {

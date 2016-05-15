@@ -3,7 +3,9 @@ package matthewallenlinsoftware.cs_m117_assassins;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
@@ -17,7 +19,7 @@ public class login_page extends AppCompatActivity {
 
     Firebase myFirebaseRef;
     EditText editText;
-    public int LobbySize;
+    public long LobbySize;
     public long [] active_users = {-1,-1,-1,-1,-1,-1};
 
 
@@ -87,7 +89,7 @@ public class login_page extends AppCompatActivity {
         myFirebaseRef.child("Lobby").child("Size").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-                active_users[5] = (long) snapshot.getValue();
+                LobbySize = (long) snapshot.getValue();
             }
 
             @Override
@@ -110,14 +112,24 @@ public class login_page extends AppCompatActivity {
         if (your_user == -1) {
             showAlertDialogue("Sorry the Lobby is currently full!");
         }
+        else if(editText.getText().toString().isEmpty() || editText.getText().toString().length() > 12){
+            showAlertDialogue("Your Username is too short or too long!");
+        }
         else {
             //set User Active and name
             myFirebaseRef.child("Lobby").child("User" + your_user).child("Active").setValue(1);
             myFirebaseRef.child("Lobby").child("User"+your_user).child("Name").setValue(editText.getText().toString());
+            myFirebaseRef.child("Lobby").child("Occupied").setValue(your_user);
+
+            // store username and number
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putString("UserName", editText.getText().toString());
+            editor.putInt("UserNumber", your_user);
+            editor.commit();
 
             //Starting a new Intent
             Intent nextScreen = new Intent(getApplicationContext(), lobby_page.class);
-            //Sending data to another Activity
             startActivity(nextScreen);
         }
     }
