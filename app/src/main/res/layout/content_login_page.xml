@@ -17,22 +17,67 @@
         android:scaleType="fitXY"
         android:layout_alignParentBottom="true" />
 
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:ems="10"
-        android:id="@+id/username"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="170dp" />
+    <ImageView
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:id="@+id/imageView2"
+        android:layout_gravity="right"
+        android:src="@drawable/skull_icon"
+        android:layout_alignParentRight="true"
+        android:adjustViewBounds="true"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="20dp" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Enter Lobby"
-        android:id="@+id/enter_lobby_button"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:onClick="onClick" />
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Enter Username"
+            android:id="@+id/login_page_title"
+            android:layout_gravity="center_horizontal"
+            android:textSize="35sp"
+            android:textColor="#ffffff"
+            android:fontFamily="sans-serif"
+            android:layout_marginBottom="10dp" />
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:ems="10"
+            android:id="@+id/username"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:outlineProvider="bounds"
+            android:background="@drawable/border"
+            android:textSize="25sp"
+            android:fontFamily="sans-serif"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:paddingTop="2dp"
+            android:paddingBottom="2dp"
+            android:textColor="#ffffff"
+            android:layout_marginBottom="20dp" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Enter Lobby"
+            android:id="@+id/enter_lobby_button"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            android:onClick="onClick"
+            android:background="@drawable/button_filled"
+            android:fontFamily="sans-serif"
+            android:textColor="#000000"
+            android:textSize="15sp"
+            android:textAllCaps="false"/>
+    </LinearLayout>
 </RelativeLayout>
