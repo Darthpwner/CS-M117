@@ -317,7 +317,7 @@ public class game_page extends FragmentActivity implements OnMapReadyCallback, L
     public boolean computeIfGameOver() {
         int targetNumber = -1;
         long usernumber = PreferenceManager.getDefaultSharedPreferences(game_page.this).getInt("UserNumber", -1) -1;
-        boolean gameover = false;
+        boolean gameover = true;
         for(long i = (usernumber+1)%Occupied; i != usernumber; i= (i+1)%Occupied){
             if (active_users[(int)i] == ""){
                 continue;
