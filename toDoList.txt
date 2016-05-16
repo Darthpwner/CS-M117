@@ -1,0 +1,8 @@
+1. Fix Lobby Page -> Do not display names that are not active
+2. Kill button should give you alert if you are killed
+3. Change app icon and name
+4. Alert if you are close to target
+5. Alert if you are not close enough to kill and you try to kill
+6. Info button should do something
+7. Alert If killer is close to you
+8. Check if map updating every time user changes location will work or whether we need to put it in a timer function
