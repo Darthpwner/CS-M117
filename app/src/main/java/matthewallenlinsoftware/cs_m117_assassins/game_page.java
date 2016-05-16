@@ -58,7 +58,7 @@ public class game_page extends FragmentActivity implements OnMapReadyCallback, L
         killButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(lastEnemyLocation == lastUserLocation){
+                if (lastEnemyLocation == lastUserLocation) {
 
                 }
             }
@@ -94,7 +94,7 @@ public class game_page extends FragmentActivity implements OnMapReadyCallback, L
                                                             @Override
                                                             public void onDataChange(DataSnapshot snapshot) {
                                                                 Occupied = (long) snapshot.getValue();
-                                                                if (computeIfGameOver()){
+                                                                if (computeIfGameOver()) {
                                                                     showAlertDialogue("Game has ended");
                                                                     myFirebaseRef.child("Active").setValue(0);
                                                                     myFirebaseRef.child("Lobby").child("User1").child("Active").setValue(0);
@@ -131,38 +131,37 @@ public class game_page extends FragmentActivity implements OnMapReadyCallback, L
                                                                     startMain.addCategory(Intent.CATEGORY_HOME);
                                                                     startMain.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                                                     startActivity(startMain);
-                                                                }
-                                                                else {
-                                                                        int targetNumber = computeTargetNumber();
-                                                                        targetLabel.setText(active_users[targetNumber]);
-                                                                        myFirebaseRef.child("Lobby").child("User" + (targetNumber + 1)).child("Lat").addValueEventListener(new ValueEventListener() {
-                                                                            @Override
-                                                                            public void onDataChange(DataSnapshot snapshot) {
-                                                                                System.out.println("LAT");
-                                                                                System.out.println(snapshot.getValue());
-                                                                                System.out.println("LAT");
-                                                                                target_lat = (double) snapshot.getValue();
-                                                                                int targetNumber = computeTargetNumber();
-                                                                                myFirebaseRef.child("Lobby").child("User" + (targetNumber + 1)).child("Long").addValueEventListener(new ValueEventListener() {
-                                                                                    @Override
-                                                                                    public void onDataChange(DataSnapshot snapshot) {
-                                                                                        target_lng = (double) snapshot.getValue();
-                                                                                        LatLng latLng = new LatLng(target_lat, target_lng);
-                                                                                        mMap.clear();
-                                                                                        setMarker(lastUserLocation);
-                                                                                        setEnemyMarker(latLng);
-                                                                                    }
+                                                                } else {
+                                                                    int targetNumber = computeTargetNumber();
+                                                                    targetLabel.setText(active_users[targetNumber]);
+                                                                    myFirebaseRef.child("Lobby").child("User" + (targetNumber + 1)).child("Lat").addValueEventListener(new ValueEventListener() {
+                                                                        @Override
+                                                                        public void onDataChange(DataSnapshot snapshot) {
+                                                                            System.out.println("LAT");
+                                                                            System.out.println(snapshot.getValue());
+                                                                            System.out.println("LAT");
+                                                                            target_lat = (double) snapshot.getValue();
+                                                                            int targetNumber = computeTargetNumber();
+                                                                            myFirebaseRef.child("Lobby").child("User" + (targetNumber + 1)).child("Long").addValueEventListener(new ValueEventListener() {
+                                                                                @Override
+                                                                                public void onDataChange(DataSnapshot snapshot) {
+                                                                                    target_lng = (double) snapshot.getValue();
+                                                                                    LatLng latLng = new LatLng(target_lat, target_lng);
+                                                                                    mMap.clear();
+                                                                                    setMarker(lastUserLocation);
+                                                                                    setEnemyMarker(latLng);
+                                                                                }
 
-                                                                                    @Override
-                                                                                    public void onCancelled(FirebaseError error) {
-                                                                                    }
-                                                                                });
-                                                                            }
+                                                                                @Override
+                                                                                public void onCancelled(FirebaseError error) {
+                                                                                }
+                                                                            });
+                                                                        }
 
-                                                                            @Override
-                                                                            public void onCancelled(FirebaseError error) {
-                                                                            }
-                                                                        });
+                                                                        @Override
+                                                                        public void onCancelled(FirebaseError error) {
+                                                                        }
+                                                                    });
                                                                 }
                                                             }
 
@@ -171,8 +170,10 @@ public class game_page extends FragmentActivity implements OnMapReadyCallback, L
                                                             }
                                                         });
                                                     }
+
                                                     @Override
-                                                    public void onCancelled(FirebaseError error) {}
+                                                    public void onCancelled(FirebaseError error) {
+                                                    }
                                                 });
                                             }
 
@@ -187,15 +188,22 @@ public class game_page extends FragmentActivity implements OnMapReadyCallback, L
                                     }
                                 });
                             }
+
                             @Override
-                            public void onCancelled(FirebaseError error) {}
+                            public void onCancelled(FirebaseError error) {
+                            }
                         });
                     }
+
                     @Override
-                    public void onCancelled(FirebaseError error) {}
+                    public void onCancelled(FirebaseError error) {
+                    }
                 });
             }
-            @Override public void onCancelled(FirebaseError error) { }
+
+            @Override
+            public void onCancelled(FirebaseError error) {
+            }
         });
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -210,9 +218,13 @@ public class game_page extends FragmentActivity implements OnMapReadyCallback, L
 
     public int computeTargetNumber() {
         int targetNumber = -1;
-        int usernumber = PreferenceManager.getDefaultSharedPreferences(game_page.this).getInt("UserNumber", -1);
+        long usernumber = PreferenceManager.getDefaultSharedPreferences(game_page.this).getInt("UserNumber", -1) -1;
         boolean gameover = false;
-        for(long i = (usernumber+1)%Occupied; i == usernumber; i= (i+1)%Occupied){
+        for(long i = (usernumber+1)%Occupied; i != usernumber; i= (i+1)%Occupied){
+            System.out.println("FUCK YOU CAST");
+            System.out.println(i);
+            System.out.println((int) i);
+            System.out.println("FUCK YOU CAST");
             if (active_users[(int)i] == ""){
                 continue;
             }
