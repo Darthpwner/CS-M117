@@ -58,7 +58,7 @@ public class game_page extends FragmentActivity implements OnMapReadyCallback, L
         killButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (lastEnemyLocation == lastUserLocation) {
+                if (lastEnemyLocation.latitude == lastUserLocation.latitude && lastEnemyLocation.longitude == lastEnemyLocation.longitude) {
                     int target = computeTargetNumber();
                     myFirebaseRef.child("Lobby").child("User"+(target+1)).child("Active").setValue(0);
                     active_users[target] = "";
