@@ -59,7 +59,7 @@ public class game_page extends FragmentActivity implements OnMapReadyCallback, L
         myFirebaseRef.child("Active").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-                if( snapshot.getValue() == 0){
+                if((long) snapshot.getValue() == 0){
                     showAlertDialogue("Game has ended");
                     myFirebaseRef.child("Active").setValue(0);
                     myFirebaseRef.child("Lobby").child("User1").child("Active").setValue(0);
