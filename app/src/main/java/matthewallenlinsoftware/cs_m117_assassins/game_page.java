@@ -59,6 +59,80 @@ public class game_page extends FragmentActivity implements OnMapReadyCallback, L
             @Override
             public void onClick(View v) {
                 if (lastEnemyLocation == lastUserLocation) {
+                    int target = computeTargetNumber();
+                    myFirebaseRef.child("Lobby").child("User"+(target+1)).child("Active").setValue(0);
+                    active_users[target] = "";
+                    if (computeIfGameOver()) {
+                        showAlertDialogue("Game has ended");
+                        myFirebaseRef.child("Active").setValue(0);
+                        myFirebaseRef.child("Lobby").child("User1").child("Active").setValue(0);
+                        myFirebaseRef.child("Lobby").child("User1").child("Lat").setValue(0);
+                        myFirebaseRef.child("Lobby").child("User1").child("Long").setValue(0);
+                        myFirebaseRef.child("Lobby").child("User1").child("Name").setValue("");
+
+                        myFirebaseRef.child("Lobby").child("User2").child("Active").setValue(0);
+                        myFirebaseRef.child("Lobby").child("User2").child("Lat").setValue(0);
+                        myFirebaseRef.child("Lobby").child("User2").child("Long").setValue(0);
+                        myFirebaseRef.child("Lobby").child("User2").child("Name").setValue("");
+
+                        myFirebaseRef.child("Lobby").child("User3").child("Active").setValue(0);
+                        myFirebaseRef.child("Lobby").child("User3").child("Lat").setValue(0);
+                        myFirebaseRef.child("Lobby").child("User3").child("Long").setValue(0);
+                        myFirebaseRef.child("Lobby").child("User3").child("Name").setValue("");
+
+                        myFirebaseRef.child("Lobby").child("User4").child("Active").setValue(0);
+                        myFirebaseRef.child("Lobby").child("User4").child("Lat").setValue(0);
+                        myFirebaseRef.child("Lobby").child("User4").child("Long").setValue(0);
+                        myFirebaseRef.child("Lobby").child("User4").child("Name").setValue("");
+
+                        myFirebaseRef.child("Lobby").child("User5").child("Active").setValue(0);
+                        myFirebaseRef.child("Lobby").child("User5").child("Lat").setValue(0);
+                        myFirebaseRef.child("Lobby").child("User5").child("Long").setValue(0);
+                        myFirebaseRef.child("Lobby").child("User5").child("Name").setValue("");
+
+                        myFirebaseRef.child("Lobby").child("User6").child("Active").setValue(0);
+                        myFirebaseRef.child("Lobby").child("User6").child("Lat").setValue(0);
+                        myFirebaseRef.child("Lobby").child("User6").child("Long").setValue(0);
+                        myFirebaseRef.child("Lobby").child("User6").child("Name").setValue("");
+
+                        Intent startMain = new Intent(getApplicationContext(), selection_page.class);
+                        startMain.addCategory(Intent.CATEGORY_HOME);
+                        startMain.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(startMain);
+                    } else {
+                        int targetNumber = computeTargetNumber();
+                        targetLabel.setText(active_users[targetNumber]);
+                        myFirebaseRef.child("Lobby").child("User" + (targetNumber + 1)).child("Lat").addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot snapshot) {
+                                System.out.println("LAT");
+                                System.out.println(snapshot.getValue());
+                                System.out.println("LAT");
+                                target_lat = (double) snapshot.getValue();
+                                int targetNumber = computeTargetNumber();
+                                myFirebaseRef.child("Lobby").child("User" + (targetNumber + 1)).child("Long").addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot snapshot) {
+                                        target_lng = (double) snapshot.getValue();
+                                        LatLng latLng = new LatLng(target_lat, target_lng);
+                                        mMap.clear();
+                                        setMarker(lastUserLocation);
+                                        setEnemyMarker(latLng);
+                                    }
+
+                                    @Override
+                                    public void onCancelled(FirebaseError error) {
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void onCancelled(FirebaseError error) {
+                            }
+                        });
+                    }
+
+
 
                 }
             }
