@@ -55,6 +55,32 @@ public class game_page extends FragmentActivity implements OnMapReadyCallback, L
         setContentView(R.layout.activity_game_page);
         killButton = (Button) findViewById(R.id.kill_button);
         targetLabel = (TextView) findViewById(R.id.game_target);
+
+        myFirebaseRef.child("Active").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                if( snapshot.getValue() == 0){
+                    showAlertDialogue("Game has ended");
+                    myFirebaseRef.child("Active").setValue(0);
+                    myFirebaseRef.child("Lobby").child("User1").child("Active").setValue(0);
+                    myFirebaseRef.child("Lobby").child("User2").child("Active").setValue(0);
+                    myFirebaseRef.child("Lobby").child("User3").child("Active").setValue(0);
+                    myFirebaseRef.child("Lobby").child("User4").child("Active").setValue(0);
+                    myFirebaseRef.child("Lobby").child("User5").child("Active").setValue(0);
+                    myFirebaseRef.child("Lobby").child("User6").child("Active").setValue(0);
+                    Intent startMain = new Intent(getApplicationContext(), selection_page.class);
+                    startMain.addCategory(Intent.CATEGORY_HOME);
+                    startMain.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(startMain);
+                }
+
+            }
+
+            @Override
+            public void onCancelled(FirebaseError error) {
+            }
+        });
+
         killButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
