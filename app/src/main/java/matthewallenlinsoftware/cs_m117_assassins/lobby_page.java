@@ -120,6 +120,21 @@ public class lobby_page extends AppCompatActivity {
             @Override
             public void onCancelled(FirebaseError error) {}
         });
+        myFirebaseRef.child("Active").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                long game_started = (long) snapshot.getValue();
+                if (game_started == 1){
+                    int usernumber = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getInt("UserNumber", -1);
+                    //Starting a new Intent
+                    Intent nextScreen = new Intent(getApplicationContext(), game_page.class);
+                    startActivity(nextScreen);
+                }
+                subtitle.setText(Occupied + " of 6 people have joined");
+            }
+            @Override
+            public void onCancelled(FirebaseError error) {}
+        });
     }
 
     public void onClick(View v) {
