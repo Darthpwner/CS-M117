@@ -66,18 +66,7 @@ public class game_page extends FragmentActivity implements OnMapReadyCallback, L
                     myFirebaseRef.child("Lobby").child("User"+(target+1)).child("Active").setValue(0);
                     active_users[target] = "";
                     if (computeIfGameOver()) {
-                        showAlertDialogue("Game has ended");
-                        myFirebaseRef.child("Active").setValue(0);
-                        myFirebaseRef.child("Lobby").child("User1").child("Active").setValue(0);
-                        myFirebaseRef.child("Lobby").child("User2").child("Active").setValue(0);
-                        myFirebaseRef.child("Lobby").child("User3").child("Active").setValue(0);
-                        myFirebaseRef.child("Lobby").child("User4").child("Active").setValue(0);
-                        myFirebaseRef.child("Lobby").child("User5").child("Active").setValue(0);
-                        myFirebaseRef.child("Lobby").child("User6").child("Active").setValue(0);
-                        Intent startMain = new Intent(getApplicationContext(), selection_page.class);
-                        startMain.addCategory(Intent.CATEGORY_HOME);
-                        startMain.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        startActivity(startMain);
+                        endGameAlert();
                     } else {
                         int targetNumber = computeTargetNumber();
                         targetLabel.setText(active_users[targetNumber]);
@@ -123,18 +112,7 @@ public class game_page extends FragmentActivity implements OnMapReadyCallback, L
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 if((long) snapshot.getValue() == 0){
-                    showAlertDialogue("Game has ended");
-                    myFirebaseRef.child("Active").setValue(0);
-                    myFirebaseRef.child("Lobby").child("User1").child("Active").setValue(0);
-                    myFirebaseRef.child("Lobby").child("User2").child("Active").setValue(0);
-                    myFirebaseRef.child("Lobby").child("User3").child("Active").setValue(0);
-                    myFirebaseRef.child("Lobby").child("User4").child("Active").setValue(0);
-                    myFirebaseRef.child("Lobby").child("User5").child("Active").setValue(0);
-                    myFirebaseRef.child("Lobby").child("User6").child("Active").setValue(0);
-                    Intent startMain = new Intent(getApplicationContext(), selection_page.class);
-                    startMain.addCategory(Intent.CATEGORY_HOME);
-                    startMain.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(startMain);
+                    endGameAlert();
                 }
 
             }
@@ -171,18 +149,7 @@ public class game_page extends FragmentActivity implements OnMapReadyCallback, L
                                                             public void onDataChange(DataSnapshot snapshot) {
                                                                 Occupied = (long) snapshot.getValue();
                                                                 if (computeIfGameOver()) {
-                                                                    showAlertDialogue("Game has ended");
-                                                                    myFirebaseRef.child("Active").setValue(0);
-                                                                    myFirebaseRef.child("Lobby").child("User1").child("Active").setValue(0);
-                                                                    myFirebaseRef.child("Lobby").child("User2").child("Active").setValue(0);
-                                                                    myFirebaseRef.child("Lobby").child("User3").child("Active").setValue(0);
-                                                                    myFirebaseRef.child("Lobby").child("User4").child("Active").setValue(0);
-                                                                    myFirebaseRef.child("Lobby").child("User5").child("Active").setValue(0);
-                                                                    myFirebaseRef.child("Lobby").child("User6").child("Active").setValue(0);
-                                                                    Intent startMain = new Intent(getApplicationContext(), selection_page.class);
-                                                                    startMain.addCategory(Intent.CATEGORY_HOME);
-                                                                    startMain.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                                                    startActivity(startMain);
+                                                                    endGameAlert();
                                                                 } else {
                                                                     int targetNumber = computeTargetNumber();
                                                                     targetLabel.setText(active_users[targetNumber]);
@@ -421,6 +388,7 @@ public class game_page extends FragmentActivity implements OnMapReadyCallback, L
     public void onProviderDisabled(String provider) {
 
     }
+
     public void showAlertDialogue(String message){
         AlertDialog alertDialog = new AlertDialog.Builder(this).create();
         alertDialog.setTitle("Invalid");
@@ -429,6 +397,29 @@ public class game_page extends FragmentActivity implements OnMapReadyCallback, L
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
+                    }
+                });
+        alertDialog.show();
+    }
+    public void endGameAlert(){
+        AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+        alertDialog.setTitle("Invalid");
+        alertDialog.setMessage("Game has ended");
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "Ok",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        myFirebaseRef.child("Active").setValue(0);
+                        myFirebaseRef.child("Lobby").child("User1").child("Active").setValue(0);
+                        myFirebaseRef.child("Lobby").child("User2").child("Active").setValue(0);
+                        myFirebaseRef.child("Lobby").child("User3").child("Active").setValue(0);
+                        myFirebaseRef.child("Lobby").child("User4").child("Active").setValue(0);
+                        myFirebaseRef.child("Lobby").child("User5").child("Active").setValue(0);
+                        myFirebaseRef.child("Lobby").child("User6").child("Active").setValue(0);
+                        Intent startMain = new Intent(getApplicationContext(), selection_page.class);
+                        startMain.addCategory(Intent.CATEGORY_HOME);
+                        startMain.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(startMain);
                     }
                 });
         alertDialog.show();
