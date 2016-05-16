@@ -133,7 +133,7 @@ public class game_page extends FragmentActivity implements OnMapReadyCallback, L
                     myFirebaseRef.child("Lobby").child("User6").child("Active").setValue(0);
                     Intent startMain = new Intent(getApplicationContext(), selection_page.class);
                     startMain.addCategory(Intent.CATEGORY_HOME);
-                    startMain.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startMain.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(startMain);
                 }
 
@@ -181,7 +181,8 @@ public class game_page extends FragmentActivity implements OnMapReadyCallback, L
                                                                     myFirebaseRef.child("Lobby").child("User6").child("Active").setValue(0);
                                                                     Intent startMain = new Intent(getApplicationContext(), selection_page.class);
                                                                     startMain.addCategory(Intent.CATEGORY_HOME);
-                                                                    startMain.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                                                    startMain.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                                                    startActivity(startMain);
                                                                 } else {
                                                                     int targetNumber = computeTargetNumber();
                                                                     targetLabel.setText(active_users[targetNumber]);

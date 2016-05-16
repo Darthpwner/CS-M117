@@ -103,22 +103,20 @@ public class login_page extends AppCompatActivity {
     public void onClick(View v) {
         //figure out your user number
         int your_user = -1;
-        for(int i = 0; i < active_users.length; i++){
-            if (active_users[i] == 0){
-                your_user = i+1;
+        for (int i = 0; i < active_users.length; i++) {
+            if (active_users[i] == 0) {
+                your_user = i + 1;
                 break;
             }
         }
         if (your_user == -1) {
             showAlertDialogue("Sorry the Lobby is currently full!");
-        }
-        else if(editText.getText().toString().isEmpty() || editText.getText().toString().length() > 12){
+        } else if (editText.getText().toString().isEmpty() || editText.getText().toString().length() > 12) {
             showAlertDialogue("Your Username is too short or too long!");
-        }
-        else {
+        } else {
             //set User Active and name
             myFirebaseRef.child("Lobby").child("User" + your_user).child("Active").setValue(1);
-            myFirebaseRef.child("Lobby").child("User"+your_user).child("Name").setValue(editText.getText().toString());
+            myFirebaseRef.child("Lobby").child("User" + your_user).child("Name").setValue(editText.getText().toString());
             myFirebaseRef.child("Lobby").child("Occupied").setValue(your_user);
 
             // store username and number
