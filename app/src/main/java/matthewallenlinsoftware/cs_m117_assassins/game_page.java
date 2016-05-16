@@ -1,7 +1,10 @@
 package matthewallenlinsoftware.cs_m117_assassins;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -14,6 +17,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -41,8 +45,10 @@ public class game_page extends FragmentActivity implements OnMapReadyCallback, L
     Firebase myFirebaseRef;
     double target_lng = -1;
     double target_lat = -1;
+    public int targetNumber = -1;
 
-    LatLng lastEnemyLocation = new LatLng(34.0689, -118.4452);
+
+    LatLng lastEnemyLocation = new LatLng(34.0689, -118.4451);
     LatLng lastUserLocation = new LatLng(34.0689, -118.4452);
 
     @Override
@@ -51,7 +57,14 @@ public class game_page extends FragmentActivity implements OnMapReadyCallback, L
         setContentView(R.layout.activity_game_page);
         killButton = (Button) findViewById(R.id.kill_button);
         targetLabel = (TextView) findViewById(R.id.game_target);
+        killButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(lastEnemyLocation == lastUserLocation){
 
+                }
+            }
+        });
 
         Firebase.setAndroidContext(this);
         myFirebaseRef = new Firebase("https://assassinsm1117.firebaseio.com/");
@@ -84,48 +97,124 @@ public class game_page extends FragmentActivity implements OnMapReadyCallback, L
                                                             public void onDataChange(DataSnapshot snapshot) {
                                                                 Occupied = (long) snapshot.getValue();
                                                                 int usernumber = PreferenceManager.getDefaultSharedPreferences(game_page.this).getInt("UserNumber", -1);
-
-                                                                System.out.println("sdfljlkDSjflkdsajflk");
-                                                                for(int i = 0; i < active_users.length; i++)
-                                                                    System.out.println(active_users[i]);
-                                                                System.out.println("FUDOISFJSLKDFJLKSDJFL");
-                                                                System.out.println("USER NUMBER");
-                                                                System.out.println(usernumber);
-                                                                System.out.println("USER NUMBER");
-                                                                //set target
-                                                                if(usernumber != Occupied){
-                                                                    targetLabel.setText(active_users[usernumber]);
-                                                                    myFirebaseRef.child("Lobby").child("User"+(usernumber+1)).child("Lat").addValueEventListener(new ValueEventListener() {
-                                                                        @Override
-                                                                        public void onDataChange(DataSnapshot snapshot) {
-                                                                            System.out.println("LAT");
-                                                                            System.out.println(snapshot.getValue());
-                                                                            System.out.println("LAT");
-                                                                            target_lat = (double) snapshot.getValue();
-                                                                            int usernumber = PreferenceManager.getDefaultSharedPreferences(game_page.this).getInt("UserNumber", -1);
-                                                                            myFirebaseRef.child("Lobby").child("User" + (usernumber + 1)).child("Long").addValueEventListener(new ValueEventListener() {
-                                                                                @Override
-                                                                                public void onDataChange(DataSnapshot snapshot) {
-                                                                                    target_lng = (double) snapshot.getValue();
-                                                                                    LatLng latLng = new LatLng(target_lat, target_lng);
-                                                                                    mMap.clear();
-                                                                                    setMarker(lastUserLocation);
-                                                                                    setEnemyMarker(latLng);
-                                                                                }
-
-                                                                                @Override
-                                                                                public void onCancelled(FirebaseError error) {
-                                                                                }
-                                                                            });
+                                                                boolean gameover = false;
+                                                                for(long i = usernumber; i < active_users.length; i= (i+1)%Occupied){
+                                                                    if (active_users[usernumber] == ""){
+                                                                        continue;
+                                                                    }
+                                                                    else if(active_users[usernumber] != ""){
+                                                                        if(usernumber == i){
+                                                                            //game over
+                                                                            gameover = true;
+                                                                            break;
                                                                         }
-
-                                                                        @Override
-                                                                        public void onCancelled(FirebaseError error) {
+                                                                        else {
+                                                                            targetNumber = (int) i;
+                                                                            gameover = false;
+                                                                            break;
                                                                         }
-                                                                    });
+                                                                    }
+                                                                }
+                                                                if (gameover){
+                                                                    showAlertDialogue("Game has ended");
+                                                                    myFirebaseRef.child("Active").setValue(0);
+                                                                    myFirebaseRef.child("Lobby").child("User1").child("Active").setValue(0);
+                                                                    myFirebaseRef.child("Lobby").child("User1").child("Lat").setValue(0);
+                                                                    myFirebaseRef.child("Lobby").child("User1").child("Long").setValue(0);
+                                                                    myFirebaseRef.child("Lobby").child("User1").child("Name").setValue("");
+
+                                                                    myFirebaseRef.child("Lobby").child("User2").child("Active").setValue(0);
+                                                                    myFirebaseRef.child("Lobby").child("User2").child("Lat").setValue(0);
+                                                                    myFirebaseRef.child("Lobby").child("User2").child("Long").setValue(0);
+                                                                    myFirebaseRef.child("Lobby").child("User2").child("Name").setValue("");
+
+                                                                    myFirebaseRef.child("Lobby").child("User3").child("Active").setValue(0);
+                                                                    myFirebaseRef.child("Lobby").child("User3").child("Lat").setValue(0);
+                                                                    myFirebaseRef.child("Lobby").child("User3").child("Long").setValue(0);
+                                                                    myFirebaseRef.child("Lobby").child("User3").child("Name").setValue("");
+
+                                                                    myFirebaseRef.child("Lobby").child("User4").child("Active").setValue(0);
+                                                                    myFirebaseRef.child("Lobby").child("User4").child("Lat").setValue(0);
+                                                                    myFirebaseRef.child("Lobby").child("User4").child("Long").setValue(0);
+                                                                    myFirebaseRef.child("Lobby").child("User4").child("Name").setValue("");
+
+                                                                    myFirebaseRef.child("Lobby").child("User5").child("Active").setValue(0);
+                                                                    myFirebaseRef.child("Lobby").child("User5").child("Lat").setValue(0);
+                                                                    myFirebaseRef.child("Lobby").child("User5").child("Long").setValue(0);
+                                                                    myFirebaseRef.child("Lobby").child("User5").child("Name").setValue("");
+
+                                                                    myFirebaseRef.child("Lobby").child("User6").child("Active").setValue(0);
+                                                                    myFirebaseRef.child("Lobby").child("User6").child("Lat").setValue(0);
+                                                                    myFirebaseRef.child("Lobby").child("User6").child("Long").setValue(0);
+                                                                    myFirebaseRef.child("Lobby").child("User6").child("Name").setValue("");
+
+                                                                    Intent startMain = new Intent(getApplicationContext(), selection_page.class);
+                                                                    startMain.addCategory(Intent.CATEGORY_HOME);
+                                                                    startMain.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                                                    startActivity(startMain);
                                                                 }
                                                                 else {
-                                                                    targetLabel.setText(active_users[0]);
+                                                                    //set target
+                                                                    if(targetNumber != Occupied){
+                                                                        targetLabel.setText(active_users[targetNumber]);
+                                                                        myFirebaseRef.child("Lobby").child("User" + (targetNumber + 1)).child("Lat").addValueEventListener(new ValueEventListener() {
+                                                                            @Override
+                                                                            public void onDataChange(DataSnapshot snapshot) {
+                                                                                System.out.println("LAT");
+                                                                                System.out.println(snapshot.getValue());
+                                                                                System.out.println("LAT");
+                                                                                target_lat = (double) snapshot.getValue();
+                                                                                myFirebaseRef.child("Lobby").child("User" + (targetNumber + 1)).child("Long").addValueEventListener(new ValueEventListener() {
+                                                                                    @Override
+                                                                                    public void onDataChange(DataSnapshot snapshot) {
+                                                                                        target_lng = (double) snapshot.getValue();
+                                                                                        LatLng latLng = new LatLng(target_lat, target_lng);
+                                                                                        mMap.clear();
+                                                                                        setMarker(lastUserLocation);
+                                                                                        setEnemyMarker(latLng);
+                                                                                    }
+
+                                                                                    @Override
+                                                                                    public void onCancelled(FirebaseError error) {
+                                                                                    }
+                                                                                });
+                                                                            }
+
+                                                                            @Override
+                                                                            public void onCancelled(FirebaseError error) {
+                                                                            }
+                                                                        });
+                                                                    }
+                                                                    else {
+                                                                        targetLabel.setText(active_users[0]);
+                                                                        myFirebaseRef.child("Lobby").child("User1").child("Lat").addValueEventListener(new ValueEventListener() {
+                                                                            @Override
+                                                                            public void onDataChange(DataSnapshot snapshot) {
+                                                                                System.out.println("LAT");
+                                                                                System.out.println(snapshot.getValue());
+                                                                                System.out.println("LAT");
+                                                                                target_lat = (double) snapshot.getValue();
+                                                                                myFirebaseRef.child("Lobby").child("User1").child("Long").addValueEventListener(new ValueEventListener() {
+                                                                                    @Override
+                                                                                    public void onDataChange(DataSnapshot snapshot) {
+                                                                                        target_lng = (double) snapshot.getValue();
+                                                                                        LatLng latLng = new LatLng(target_lat, target_lng);
+                                                                                        mMap.clear();
+                                                                                        setMarker(lastUserLocation);
+                                                                                        setEnemyMarker(latLng);
+                                                                                    }
+
+                                                                                    @Override
+                                                                                    public void onCancelled(FirebaseError error) {
+                                                                                    }
+                                                                                });
+                                                                            }
+
+                                                                            @Override
+                                                                            public void onCancelled(FirebaseError error) {
+                                                                            }
+                                                                        });
+                                                                    }
                                                                 }
                                                             }
 
@@ -272,4 +361,17 @@ public class game_page extends FragmentActivity implements OnMapReadyCallback, L
     public void onProviderDisabled(String provider) {
 
     }
+    public void showAlertDialogue(String message){
+        AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+        alertDialog.setTitle("Invalid");
+        alertDialog.setMessage(message);
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "Ok",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        alertDialog.show();
+    }
+
 }
