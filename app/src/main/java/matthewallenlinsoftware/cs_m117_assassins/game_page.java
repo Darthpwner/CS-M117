@@ -66,33 +66,33 @@ public class game_page extends FragmentActivity implements OnMapReadyCallback, L
                         showAlertDialogue("Game has ended");
                         myFirebaseRef.child("Active").setValue(0);
                         myFirebaseRef.child("Lobby").child("User1").child("Active").setValue(0);
-                        myFirebaseRef.child("Lobby").child("User1").child("Lat").setValue(0);
-                        myFirebaseRef.child("Lobby").child("User1").child("Long").setValue(0);
+                        myFirebaseRef.child("Lobby").child("User1").child("Lat").setValue(0.0001);
+                        myFirebaseRef.child("Lobby").child("User1").child("Long").setValue(0.0001);
                         myFirebaseRef.child("Lobby").child("User1").child("Name").setValue("");
 
                         myFirebaseRef.child("Lobby").child("User2").child("Active").setValue(0);
-                        myFirebaseRef.child("Lobby").child("User2").child("Lat").setValue(0);
-                        myFirebaseRef.child("Lobby").child("User2").child("Long").setValue(0);
+                        myFirebaseRef.child("Lobby").child("User2").child("Lat").setValue(0.0001);
+                        myFirebaseRef.child("Lobby").child("User2").child("Long").setValue(0.0001);
                         myFirebaseRef.child("Lobby").child("User2").child("Name").setValue("");
 
                         myFirebaseRef.child("Lobby").child("User3").child("Active").setValue(0);
-                        myFirebaseRef.child("Lobby").child("User3").child("Lat").setValue(0);
-                        myFirebaseRef.child("Lobby").child("User3").child("Long").setValue(0);
+                        myFirebaseRef.child("Lobby").child("User3").child("Lat").setValue(0.0001);
+                        myFirebaseRef.child("Lobby").child("User3").child("Long").setValue(0.0001);
                         myFirebaseRef.child("Lobby").child("User3").child("Name").setValue("");
 
                         myFirebaseRef.child("Lobby").child("User4").child("Active").setValue(0);
-                        myFirebaseRef.child("Lobby").child("User4").child("Lat").setValue(0);
-                        myFirebaseRef.child("Lobby").child("User4").child("Long").setValue(0);
+                        myFirebaseRef.child("Lobby").child("User4").child("Lat").setValue(0.0001);
+                        myFirebaseRef.child("Lobby").child("User4").child("Long").setValue(0.0001);
                         myFirebaseRef.child("Lobby").child("User4").child("Name").setValue("");
 
                         myFirebaseRef.child("Lobby").child("User5").child("Active").setValue(0);
-                        myFirebaseRef.child("Lobby").child("User5").child("Lat").setValue(0);
-                        myFirebaseRef.child("Lobby").child("User5").child("Long").setValue(0);
+                        myFirebaseRef.child("Lobby").child("User5").child("Lat").setValue(0.0001);
+                        myFirebaseRef.child("Lobby").child("User5").child("Long").setValue(0.0001);
                         myFirebaseRef.child("Lobby").child("User5").child("Name").setValue("");
 
                         myFirebaseRef.child("Lobby").child("User6").child("Active").setValue(0);
-                        myFirebaseRef.child("Lobby").child("User6").child("Lat").setValue(0);
-                        myFirebaseRef.child("Lobby").child("User6").child("Long").setValue(0);
+                        myFirebaseRef.child("Lobby").child("User6").child("Lat").setValue(0.0001);
+                        myFirebaseRef.child("Lobby").child("User6").child("Long").setValue(0.0001);
                         myFirebaseRef.child("Lobby").child("User6").child("Name").setValue("");
 
                         Intent startMain = new Intent(getApplicationContext(), selection_page.class);
@@ -172,33 +172,33 @@ public class game_page extends FragmentActivity implements OnMapReadyCallback, L
                                                                     showAlertDialogue("Game has ended");
                                                                     myFirebaseRef.child("Active").setValue(0);
                                                                     myFirebaseRef.child("Lobby").child("User1").child("Active").setValue(0);
-                                                                    myFirebaseRef.child("Lobby").child("User1").child("Lat").setValue(0);
-                                                                    myFirebaseRef.child("Lobby").child("User1").child("Long").setValue(0);
+                                                                    myFirebaseRef.child("Lobby").child("User1").child("Lat").setValue(0.0001);
+                                                                    myFirebaseRef.child("Lobby").child("User1").child("Long").setValue(0.0001);
                                                                     myFirebaseRef.child("Lobby").child("User1").child("Name").setValue("");
 
                                                                     myFirebaseRef.child("Lobby").child("User2").child("Active").setValue(0);
-                                                                    myFirebaseRef.child("Lobby").child("User2").child("Lat").setValue(0);
-                                                                    myFirebaseRef.child("Lobby").child("User2").child("Long").setValue(0);
+                                                                    myFirebaseRef.child("Lobby").child("User2").child("Lat").setValue(0.0001);
+                                                                    myFirebaseRef.child("Lobby").child("User2").child("Long").setValue(0.0001);
                                                                     myFirebaseRef.child("Lobby").child("User2").child("Name").setValue("");
 
                                                                     myFirebaseRef.child("Lobby").child("User3").child("Active").setValue(0);
-                                                                    myFirebaseRef.child("Lobby").child("User3").child("Lat").setValue(0);
-                                                                    myFirebaseRef.child("Lobby").child("User3").child("Long").setValue(0);
+                                                                    myFirebaseRef.child("Lobby").child("User3").child("Lat").setValue(0.0001);
+                                                                    myFirebaseRef.child("Lobby").child("User3").child("Long").setValue(0.0001);
                                                                     myFirebaseRef.child("Lobby").child("User3").child("Name").setValue("");
 
                                                                     myFirebaseRef.child("Lobby").child("User4").child("Active").setValue(0);
-                                                                    myFirebaseRef.child("Lobby").child("User4").child("Lat").setValue(0);
-                                                                    myFirebaseRef.child("Lobby").child("User4").child("Long").setValue(0);
+                                                                    myFirebaseRef.child("Lobby").child("User4").child("Lat").setValue(0.0001);
+                                                                    myFirebaseRef.child("Lobby").child("User4").child("Long").setValue(0.0001);
                                                                     myFirebaseRef.child("Lobby").child("User4").child("Name").setValue("");
 
                                                                     myFirebaseRef.child("Lobby").child("User5").child("Active").setValue(0);
-                                                                    myFirebaseRef.child("Lobby").child("User5").child("Lat").setValue(0);
-                                                                    myFirebaseRef.child("Lobby").child("User5").child("Long").setValue(0);
+                                                                    myFirebaseRef.child("Lobby").child("User5").child("Lat").setValue(0.0001);
+                                                                    myFirebaseRef.child("Lobby").child("User5").child("Long").setValue(0.0001);
                                                                     myFirebaseRef.child("Lobby").child("User5").child("Name").setValue("");
 
                                                                     myFirebaseRef.child("Lobby").child("User6").child("Active").setValue(0);
-                                                                    myFirebaseRef.child("Lobby").child("User6").child("Lat").setValue(0);
-                                                                    myFirebaseRef.child("Lobby").child("User6").child("Long").setValue(0);
+                                                                    myFirebaseRef.child("Lobby").child("User6").child("Lat").setValue(0.0001);
+                                                                    myFirebaseRef.child("Lobby").child("User6").child("Long").setValue(0.0001);
                                                                     myFirebaseRef.child("Lobby").child("User6").child("Name").setValue("");
 
                                                                     Intent startMain = new Intent(getApplicationContext(), selection_page.class);
@@ -315,6 +315,12 @@ public class game_page extends FragmentActivity implements OnMapReadyCallback, L
     }
 
     public boolean computeIfGameOver() {
+
+        System.out.println("jsdlkfjsdlkfjlksdjf");
+        for(int i = 0; i < active_users.length;i++){
+            System.out.print(active_users[i]+ " ");
+        }
+        System.out.println("\njsdlkfjsdlkfjlksdjf");
         int targetNumber = -1;
         long usernumber = PreferenceManager.getDefaultSharedPreferences(game_page.this).getInt("UserNumber", -1) -1;
         boolean gameover = true;
