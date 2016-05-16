@@ -98,7 +98,7 @@ public class game_page extends FragmentActivity implements OnMapReadyCallback, L
                                                                 Occupied = (long) snapshot.getValue();
                                                                 int usernumber = PreferenceManager.getDefaultSharedPreferences(game_page.this).getInt("UserNumber", -1);
                                                                 boolean gameover = false;
-                                                                for(long i = usernumber+1; i < active_users.length; i= (i+1)%Occupied){
+                                                                for(long i = usernumber+1; i == usernumber; i= (i+1)%Occupied){
                                                                     if (active_users[usernumber] == ""){
                                                                         continue;
                                                                     }
