@@ -45,8 +45,6 @@ public class game_page extends FragmentActivity implements OnMapReadyCallback, L
     Firebase myFirebaseRef;
     double target_lng = -1;
     double target_lat = -1;
-    public int targetNumber = -1;
-
 
     LatLng lastEnemyLocation = new LatLng(34.0689, -118.4451);
     LatLng lastUserLocation = new LatLng(34.0689, -118.4452);
@@ -96,26 +94,7 @@ public class game_page extends FragmentActivity implements OnMapReadyCallback, L
                                                             @Override
                                                             public void onDataChange(DataSnapshot snapshot) {
                                                                 Occupied = (long) snapshot.getValue();
-                                                                int usernumber = PreferenceManager.getDefaultSharedPreferences(game_page.this).getInt("UserNumber", -1);
-                                                                boolean gameover = false;
-                                                                for(long i = (usernumber+1)%Occupied; i == usernumber; i= (i+1)%Occupied){
-                                                                    if (active_users[(int)i] == ""){
-                                                                        continue;
-                                                                    }
-                                                                    else if(active_users[(int)i] != ""){
-                                                                        if(usernumber == i){
-                                                                            //game over
-                                                                            gameover = true;
-                                                                            break;
-                                                                        }
-                                                                        else {
-                                                                            targetNumber = (int) i;
-                                                                            gameover = false;
-                                                                            break;
-                                                                        }
-                                                                    }
-                                                                }
-                                                                if (gameover){
+                                                                if (computeIfGameOver()){
                                                                     showAlertDialogue("Game has ended");
                                                                     myFirebaseRef.child("Active").setValue(0);
                                                                     myFirebaseRef.child("Lobby").child("User1").child("Active").setValue(0);
@@ -154,8 +133,7 @@ public class game_page extends FragmentActivity implements OnMapReadyCallback, L
                                                                     startActivity(startMain);
                                                                 }
                                                                 else {
-                                                                    //set target
-                                                                    if(targetNumber != Occupied){
+                                                                        int targetNumber = computeTargetNumber();
                                                                         targetLabel.setText(active_users[targetNumber]);
                                                                         myFirebaseRef.child("Lobby").child("User" + (targetNumber + 1)).child("Lat").addValueEventListener(new ValueEventListener() {
                                                                             @Override
@@ -164,6 +142,7 @@ public class game_page extends FragmentActivity implements OnMapReadyCallback, L
                                                                                 System.out.println(snapshot.getValue());
                                                                                 System.out.println("LAT");
                                                                                 target_lat = (double) snapshot.getValue();
+                                                                                int targetNumber = computeTargetNumber();
                                                                                 myFirebaseRef.child("Lobby").child("User" + (targetNumber + 1)).child("Long").addValueEventListener(new ValueEventListener() {
                                                                                     @Override
                                                                                     public void onDataChange(DataSnapshot snapshot) {
@@ -184,37 +163,6 @@ public class game_page extends FragmentActivity implements OnMapReadyCallback, L
                                                                             public void onCancelled(FirebaseError error) {
                                                                             }
                                                                         });
-                                                                    }
-                                                                    else {
-                                                                        targetLabel.setText(active_users[0]);
-                                                                        myFirebaseRef.child("Lobby").child("User1").child("Lat").addValueEventListener(new ValueEventListener() {
-                                                                            @Override
-                                                                            public void onDataChange(DataSnapshot snapshot) {
-                                                                                System.out.println("LAT");
-                                                                                System.out.println(snapshot.getValue());
-                                                                                System.out.println("LAT");
-                                                                                target_lat = (double) snapshot.getValue();
-                                                                                myFirebaseRef.child("Lobby").child("User1").child("Long").addValueEventListener(new ValueEventListener() {
-                                                                                    @Override
-                                                                                    public void onDataChange(DataSnapshot snapshot) {
-                                                                                        target_lng = (double) snapshot.getValue();
-                                                                                        LatLng latLng = new LatLng(target_lat, target_lng);
-                                                                                        mMap.clear();
-                                                                                        setMarker(lastUserLocation);
-                                                                                        setEnemyMarker(latLng);
-                                                                                    }
-
-                                                                                    @Override
-                                                                                    public void onCancelled(FirebaseError error) {
-                                                                                    }
-                                                                                });
-                                                                            }
-
-                                                                            @Override
-                                                                            public void onCancelled(FirebaseError error) {
-                                                                            }
-                                                                        });
-                                                                    }
                                                                 }
                                                             }
 
@@ -258,8 +206,54 @@ public class game_page extends FragmentActivity implements OnMapReadyCallback, L
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         provider = locationManager.getBestProvider(new Criteria(), false);
+    }
 
+    public int computeTargetNumber() {
+        int targetNumber = -1;
+        int usernumber = PreferenceManager.getDefaultSharedPreferences(game_page.this).getInt("UserNumber", -1);
+        boolean gameover = false;
+        for(long i = (usernumber+1)%Occupied; i == usernumber; i= (i+1)%Occupied){
+            if (active_users[(int)i] == ""){
+                continue;
+            }
+            else if(active_users[(int)i] != ""){
+                if(usernumber == i){
+                    //game over
+                    gameover = true;
+                    break;
+                }
+                else {
+                    targetNumber = (int) i;
+                    gameover = false;
+                    break;
+                }
+            }
+        }
+        return targetNumber;
+    }
 
+    public boolean computeIfGameOver() {
+        int targetNumber = -1;
+        int usernumber = PreferenceManager.getDefaultSharedPreferences(game_page.this).getInt("UserNumber", -1);
+        boolean gameover = false;
+        for(long i = (usernumber+1)%Occupied; i == usernumber; i= (i+1)%Occupied){
+            if (active_users[(int)i] == ""){
+                continue;
+            }
+            else if(active_users[(int)i] != ""){
+                if(usernumber == i){
+                    //game over
+                    gameover = true;
+                    break;
+                }
+                else {
+                    targetNumber = (int) i;
+                    gameover = false;
+                    break;
+                }
+            }
+        }
+        return gameover;
     }
 
     @Override
