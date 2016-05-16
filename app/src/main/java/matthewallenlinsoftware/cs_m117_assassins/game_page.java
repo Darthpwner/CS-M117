@@ -295,10 +295,6 @@ public class game_page extends FragmentActivity implements OnMapReadyCallback, L
         long usernumber = PreferenceManager.getDefaultSharedPreferences(game_page.this).getInt("UserNumber", -1) -1;
         boolean gameover = false;
         for(long i = (usernumber+1)%Occupied; i != usernumber; i= (i+1)%Occupied){
-            System.out.println("FUCK YOU CAST");
-            System.out.println(i);
-            System.out.println((int) i);
-            System.out.println("FUCK YOU CAST");
             if (active_users[(int)i] == ""){
                 continue;
             }
@@ -320,9 +316,9 @@ public class game_page extends FragmentActivity implements OnMapReadyCallback, L
 
     public boolean computeIfGameOver() {
         int targetNumber = -1;
-        int usernumber = PreferenceManager.getDefaultSharedPreferences(game_page.this).getInt("UserNumber", -1);
+        long usernumber = PreferenceManager.getDefaultSharedPreferences(game_page.this).getInt("UserNumber", -1) -1;
         boolean gameover = false;
-        for(long i = (usernumber+1)%Occupied; i == usernumber; i= (i+1)%Occupied){
+        for(long i = (usernumber+1)%Occupied; i != usernumber; i= (i+1)%Occupied){
             if (active_users[(int)i] == ""){
                 continue;
             }
