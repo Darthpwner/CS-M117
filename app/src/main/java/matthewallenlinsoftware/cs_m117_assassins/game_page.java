@@ -61,12 +61,16 @@ public class game_page extends FragmentActivity implements OnMapReadyCallback, L
         killButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (lastEnemyLocation.latitude == lastUserLocation.latitude && lastEnemyLocation.longitude == lastEnemyLocation.longitude) {
+                System.out.println("Enemy Lat: " + lastEnemyLocation.latitude);
+                System.out.println("Enemy Long: " + lastEnemyLocation.longitude);
+                System.out.println("User Lat: " + lastUserLocation.latitude);
+                System.out.println("User Long: " + lastUserLocation.longitude);
+                if ((lastEnemyLocation.latitude == lastUserLocation.latitude) && (lastEnemyLocation.longitude == lastUserLocation.longitude)) {
                     int target = computeTargetNumber();
                     myFirebaseRef.child("Lobby").child("User"+(target+1)).child("Active").setValue(0);
                     active_users[target] = "";
                     if (computeIfGameOver()) {
-                        endGameAlert();
+                        endGameAlert(false);
                     } else {
                         int targetNumber = computeTargetNumber();
                         targetLabel.setText(active_users[targetNumber]);
@@ -103,6 +107,9 @@ public class game_page extends FragmentActivity implements OnMapReadyCallback, L
 
 
                 }
+                else{
+                    showAlertDialogue("You're not close enough to kill.");
+                }
             }
         });
 
@@ -112,7 +119,7 @@ public class game_page extends FragmentActivity implements OnMapReadyCallback, L
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 if((long) snapshot.getValue() == 0){
-                    endGameAlert();
+                    endGameAlert(true);
                 }
 
             }
@@ -149,7 +156,7 @@ public class game_page extends FragmentActivity implements OnMapReadyCallback, L
                                                             public void onDataChange(DataSnapshot snapshot) {
                                                                 Occupied = (long) snapshot.getValue();
                                                                 if (computeIfGameOver()) {
-                                                                    endGameAlert();
+                                                                    endGameAlert(false);
                                                                 } else {
                                                                     int targetNumber = computeTargetNumber();
                                                                     targetLabel.setText(active_users[targetNumber]);
@@ -169,6 +176,9 @@ public class game_page extends FragmentActivity implements OnMapReadyCallback, L
                                                                                     mMap.clear();
                                                                                     setMarker(lastUserLocation);
                                                                                     setEnemyMarker(latLng);
+                                                                                    if((latLng.latitude == lastUserLocation.latitude) && (latLng.longitude == lastUserLocation.longitude)){
+                                                                                        showAlertDialogue("Target is nearby!");
+                                                                                    }
                                                                                 }
 
                                                                                 @Override
@@ -391,7 +401,7 @@ public class game_page extends FragmentActivity implements OnMapReadyCallback, L
 
     public void showAlertDialogue(String message){
         AlertDialog alertDialog = new AlertDialog.Builder(this).create();
-        alertDialog.setTitle("Invalid");
+        alertDialog.setTitle("Notification");
         alertDialog.setMessage(message);
         alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "Ok",
                 new DialogInterface.OnClickListener() {
@@ -401,10 +411,15 @@ public class game_page extends FragmentActivity implements OnMapReadyCallback, L
                 });
         alertDialog.show();
     }
-    public void endGameAlert(){
+    public void endGameAlert(boolean ifKilled){
         AlertDialog alertDialog = new AlertDialog.Builder(this).create();
-        alertDialog.setTitle("Invalid");
-        alertDialog.setMessage("Game has ended");
+        alertDialog.setTitle("Notification");
+        if(ifKilled){
+            alertDialog.setMessage("You've been killed. Game Over!");
+        }
+        else {
+            alertDialog.setMessage("Game has ended");
+        }
         alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "Ok",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {

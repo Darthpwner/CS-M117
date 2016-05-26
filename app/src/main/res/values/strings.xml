@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">CS-M117-Assassins</string>
+    <string name="app_name">Assassins</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_game_page">game_page</string>
     <string name="title_activity_lobby_page">lobby_page</string>

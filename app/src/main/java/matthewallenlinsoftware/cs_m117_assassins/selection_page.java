@@ -47,7 +47,17 @@ public class selection_page extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 long value = (long) snapshot.getValue();
-                if (value == 0){GameActive = false;}
+                if (value == 0){
+                    GameActive = false;
+                    Firebase.setAndroidContext(selection_page.this);
+                    Firebase myFirebaseRef = new Firebase("https://assassinsm1117.firebaseio.com/");
+                    myFirebaseRef.child("Lobby").child("User1").child("Name").setValue("");
+                    myFirebaseRef.child("Lobby").child("User2").child("Name").setValue("");
+                    myFirebaseRef.child("Lobby").child("User3").child("Name").setValue("");
+                    myFirebaseRef.child("Lobby").child("User4").child("Name").setValue("");
+                    myFirebaseRef.child("Lobby").child("User5").child("Name").setValue("");
+                    myFirebaseRef.child("Lobby").child("User6").child("Name").setValue("");
+                }
                 else {GameActive = true;}
             }
             @Override
