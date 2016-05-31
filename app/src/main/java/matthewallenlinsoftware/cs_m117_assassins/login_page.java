@@ -104,6 +104,7 @@ public class login_page extends AppCompatActivity {
         //figure out your user number
         int your_user = -1;
         for (int i = 0; i < active_users.length; i++) {
+            System.out.println(active_users[i]);
             if (active_users[i] == 0) {
                 your_user = i + 1;
                 break;

@@ -20,11 +20,14 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -33,7 +36,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class game_page extends FragmentActivity implements OnMapReadyCallback, LocationListener {
+public class game_page extends FragmentActivity implements OnMapReadyCallback, LocationListener, GoogleApiClient.ConnectionCallbacks {
 
     private GoogleMap mMap; //Might be null if Google Play services APK is not available
     Button killButton;
@@ -45,6 +48,7 @@ public class game_page extends FragmentActivity implements OnMapReadyCallback, L
     Firebase myFirebaseRef;
     double target_lng = -1;
     double target_lat = -1;
+    GoogleApiClient mGoogleApiClient;
 
     LatLng lastEnemyLocation = new LatLng(34.0689, -118.4451);
     LatLng lastUserLocation = new LatLng(34.0689, -118.4452);
@@ -65,7 +69,21 @@ public class game_page extends FragmentActivity implements OnMapReadyCallback, L
                 System.out.println("Enemy Long: " + lastEnemyLocation.longitude);
                 System.out.println("User Lat: " + lastUserLocation.latitude);
                 System.out.println("User Long: " + lastUserLocation.longitude);
-                if ((lastEnemyLocation.latitude == lastUserLocation.latitude) && (lastEnemyLocation.longitude == lastUserLocation.longitude)) {
+                boolean killed = false;
+                double lat1 = lastEnemyLocation.latitude;
+                double lon1 = lastEnemyLocation.longitude;
+                double lat2 = lastUserLocation.latitude;
+                double lon2 = lastUserLocation.longitude;
+                double theta = lon1 - lon2;
+                double dist = Math.sin(lat1* Math.PI / 180.0) * Math.sin(lat2 * Math.PI / 180.0) + Math.cos(lat1 * Math.PI / 180.0) * Math.cos(lat2 * Math.PI / 180.0) * Math.cos(theta * Math.PI / 180.0);
+                dist = Math.acos(dist);
+                dist = dist * 180 / Math.PI;
+                dist = dist * 60 * 1.1515;
+                System.out.println(dist);
+                if (dist <= .01){
+                    killed = true;
+                }
+                if (killed) {
                     int target = computeTargetNumber();
                     myFirebaseRef.child("Lobby").child("User"+(target+1)).child("Active").setValue(0);
                     active_users[target] = "";
@@ -173,9 +191,11 @@ public class game_page extends FragmentActivity implements OnMapReadyCallback, L
                                                                                 public void onDataChange(DataSnapshot snapshot) {
                                                                                     target_lng = (double) snapshot.getValue();
                                                                                     LatLng latLng = new LatLng(target_lat, target_lng);
-                                                                                    mMap.clear();
-                                                                                    setMarker(lastUserLocation);
-                                                                                    setEnemyMarker(latLng);
+                                                                                    if (mMap != null) {
+                                                                                        mMap.clear();
+                                                                                        setMarker(lastUserLocation);
+                                                                                        setEnemyMarker(latLng);
+                                                                                    }
                                                                                     if((latLng.latitude == lastUserLocation.latitude) && (latLng.longitude == lastUserLocation.longitude)){
                                                                                         showAlertDialogue("Target is nearby!");
                                                                                     }
@@ -243,6 +263,25 @@ public class game_page extends FragmentActivity implements OnMapReadyCallback, L
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         provider = locationManager.getBestProvider(new Criteria(), false);
+
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+
+        locationManager.requestSingleUpdate(LocationManager.NETWORK_PROVIDER, this, null);
+
+        //2nd parameter: Check at a minimum of 15 second intervals
+        //3rd parameter: Check 3 meters (10 feet) away
+        locationManager.requestLocationUpdates(provider, 1000, 0, this);
+        //locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 1, this);
     }
 
     public int computeTargetNumber() {
@@ -302,21 +341,6 @@ public class game_page extends FragmentActivity implements OnMapReadyCallback, L
     @Override
     protected void onResume() {
         super.onResume();
-
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-
-        //2nd parameter: Check at a minimum of 15 second intervals
-        //3rd parameter: Check 3 meters (10 feet) away
-        locationManager.requestLocationUpdates(provider, 15000, 3, this);
     }
 
     /**
@@ -331,6 +355,38 @@ public class game_page extends FragmentActivity implements OnMapReadyCallback, L
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        //mMap.setMyLocationEnabled(true);
+    }
+
+
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
+                mGoogleApiClient);
+        if (mLastLocation != null) {
+            //place marker at current position
+            //mGoogleMap.clear();
+            LatLng latLng = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+            if (mMap != null) {
+                mMap.clear();
+                setEnemyMarker(lastEnemyLocation);
+                setMarker(latLng);
+            }
+        }
+//
+//        mLocationRequest = new LocationRequest();
+//        mLocationRequest.setInterval(5000); //5 seconds
+//        mLocationRequest.setFastestInterval(3000); //3 seconds
+//        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+//        //mLocationRequest.setSmallestDisplacement(0.1F); //1/10 meter
+//
+//        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
     }
 
     //Used to scale the icons
@@ -379,9 +435,11 @@ public class game_page extends FragmentActivity implements OnMapReadyCallback, L
     @Override
     public void onLocationChanged(Location location) {
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-        mMap.clear();
-        setEnemyMarker(lastEnemyLocation);
-        setMarker(latLng);
+        if (mMap != null) {
+            mMap.clear();
+            setEnemyMarker(lastEnemyLocation);
+            setMarker(latLng);
+        }
     }
 
     @Override
